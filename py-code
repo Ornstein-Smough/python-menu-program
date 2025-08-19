@@ -1,0 +1,148 @@
+"""
+Python Strings Mini Project
+---------------------------
+This project demonstrates string manipulation with:
+1. Palindrome Checker
+2. Vowel/Consonant Counter
+3. Most Repeated Character
+4. Caesar Cipher (basic encryption & decryption)
+5. Mini Project: Text Analyzer
+"""
+
+from collections import Counter
+
+# =====================================
+# Palindrome Checker
+# Returns True if string is same forwards & backwards
+# =====================================
+def is_palindrome(text: str) -> bool:
+    cleaned = "".join(ch.lower() for ch in text if ch.isalnum())
+    return cleaned == cleaned[::-1]
+
+# =====================================
+# Vowel and Consonant Counter
+# Counts vowels and consonants separately
+# =====================================
+def count_vowels_consonants(text: str) -> tuple:
+    vowels = "aeiou"
+    v_count = c_count = 0
+    for ch in text.lower():
+        if ch.isalpha():
+            if ch in vowels:
+                v_count += 1
+            else:
+                c_count += 1
+    return v_count, c_count
+
+# =====================================
+# Most Repeated Character
+# Finds the character with highest frequency
+# =====================================
+def most_repeated_char(text: str) -> tuple:
+    if not text:
+        return None, 0
+    freq = Counter(ch for ch in text if ch.isalnum())
+    char, count = freq.most_common(1)[0]
+    return char, count
+
+# =====================================
+# Caesar Cipher
+# Encrypts & Decrypts using shift value
+# =====================================
+def caesar_cipher(text: str, shift: int, mode: str = "encrypt") -> str:
+    if mode == "decrypt":
+        shift = -shift
+    result = ""
+    for ch in text:
+        if ch.isalpha():
+            base = ord("A") if ch.isupper() else ord("a")
+            result += chr((ord(ch) - base + shift) % 26 + base)
+        else:
+            result += ch
+    return result
+
+# =====================================
+# Mini Project: Text Analyzer
+# Word count, most frequent word, longest word
+# =====================================
+def text_analyzer(text: str) -> dict:
+    words = [w.strip(".,!?;:") for w in text.lower().split()]
+    if not words or all(w == "" for w in words):
+        return {"word_count": 0, "most_frequent": None, "longest_word": None}
+
+    word_count = len([w for w in words if w])
+    freq = Counter([w for w in words if w])
+    most_frequent, _ = freq.most_common(1)[0]
+    longest_word = max([w for w in words if w], key=len)
+    return {
+        "word_count": word_count,
+        "most_frequent": most_frequent,
+        "longest_word": longest_word,
+    }
+
+# =====================================
+# MAIN PROGRAM
+# Menu-driven to run each function
+# =====================================
+def main():
+    while True:
+        print("\n====== Strings Project ======")
+        print("1. Palindrome Checker")
+        print("2. Vowel/Consonant Counter")
+        print("3. Most Repeated Character")
+        print("4. Caesar Cipher")
+        print("5. Text Analyzer")
+        print("6. Exit")
+
+        choice = input("Choose an option (1–6): ").strip()
+
+        if choice == "1":
+            text = input("Enter text: ")
+            if is_palindrome(text):
+                print("Palindrome ✔")
+            else:
+                print("Not a Palindrome ✘")
+
+        elif choice == "2":
+            text = input("Enter text: ")
+            v, c = count_vowels_consonants(text)
+            print(f"Vowels: {v}, Consonants: {c}")
+
+        elif choice == "3":
+            text = input("Enter text: ")
+            char, count = most_repeated_char(text)
+            if char:
+                print(f"Most repeated character: '{char}' ({count} times)")
+            else:
+                print("No valid characters found.")
+
+        elif choice == "4":
+            text = input("Enter text: ")
+            try:
+                shift = int(input("Enter shift value: "))
+            except ValueError:
+                print("Invalid shift.")
+                continue
+            mode = input("Encrypt or Decrypt? (e/d): ").strip().lower()
+            if mode.startswith("d"):
+                result = caesar_cipher(text, shift, "decrypt")
+            else:
+                result = caesar_cipher(text, shift, "encrypt")
+            print("Result:", result)
+
+        elif choice == "5":
+            text = input("Enter text: ")
+            result = text_analyzer(text)
+            print("Word Count:", result["word_count"])
+            print("Most Frequent Word:", result["most_frequent"])
+            print("Longest Word:", result["longest_word"])
+
+        elif choice == "6":
+            print("Exiting... seeya!")
+            break
+
+        else:
+            print("Invalid choice. Please select 1–6.")
+
+if __name__ == "__main__":
+    main()
